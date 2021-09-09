@@ -1,9 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import VueApexCharts from 'vue-apexcharts'
 
 Vue.use(VueRouter)
+Vue.use(VueApexCharts)
 
+Vue.component('apexchart', VueApexCharts)
 const routes = [
   {
     path: '/',
@@ -42,6 +45,22 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/ProfilEnqueteBack.vue')
+  },
+  {
+    path: '/detailEnqueteur',
+    name: 'detailEnqueteur',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/DetailEnqueteur.vue')
+  } ,
+  {
+    path: '/enqueteurback',
+    name: 'enqueteurback',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/EnqueteurBack.vue')
   }
 ]
 

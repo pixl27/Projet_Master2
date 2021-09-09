@@ -4,8 +4,8 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">Gestion Questionnaire</router-link> |
       <router-link to="/enqueteback">Gestion Enquete</router-link> |
-      <router-link to="/profilenqueteback">Gestion Profil Enquete</router-link>
-
+      <router-link to="/profilenqueteback">Gestion Profil Enquete</router-link> |
+      <router-link to="/enqueteurback">Gestion Enqueteur</router-link>
     </div>
     <router-view/>
   </div>

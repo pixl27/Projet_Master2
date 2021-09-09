@@ -13,7 +13,7 @@
       <b-form-group id="input-group-1" label="Enquete:" label-for="input-1">
         <b-form-select
           id="input-1"
-          v-model="form.listeenquetes"
+          v-model="form.survey"
           :options="listeenquetes"
           required
         ></b-form-select>
@@ -24,12 +24,12 @@
         v-model="form.selected"
         :aria-describedby="ariaDescribedby"
         name="flavour-2"
+        inline
       >
-        <b-form-checkbox value="orange">Orange</b-form-checkbox>
-        <b-form-checkbox value="apple">Apple</b-form-checkbox>
-        <b-form-checkbox value="pineapple">Pineapple</b-form-checkbox>
-        <b-form-checkbox value="grape">Grape</b-form-checkbox>
+           <b-form-checkbox v-for="item in listedialecte" :key="item.nom" :value="item.value" inline>{{item.nom}}</b-form-checkbox>
+
       </b-form-checkbox-group>
+     
     </b-form-group>
  <b-form-group id="input-group-2" label="Ratio Dialecte:" label-for="input-2">
         <b-form-input
@@ -46,11 +46,30 @@
         v-model="form.selectedregion"
         :aria-describedby="ariaDescribedby"
         name="flavour-2"
+        stacked
       >
-        <b-form-checkbox value="orange">Orange</b-form-checkbox>
-        <b-form-checkbox value="apple">Apple</b-form-checkbox>
-        <b-form-checkbox value="pineapple">Pineapple</b-form-checkbox>
-        <b-form-checkbox value="grape">Grape</b-form-checkbox>
+        <b-form-checkbox value="1">ANAMALANGA</b-form-checkbox>
+        <b-form-checkbox value="2">VAKINANKARATRA</b-form-checkbox>
+        <b-form-checkbox value="3">ITASY</b-form-checkbox>
+        <b-form-checkbox value="4">BONGOLAVA</b-form-checkbox>
+        <b-form-checkbox value="5">HAUTE MATSIATRA</b-form-checkbox>
+        <b-form-checkbox value="6">AMORON I MANIA</b-form-checkbox>
+        <b-form-checkbox value="7">VATOVAVY FITOVINANY</b-form-checkbox>
+        <b-form-checkbox value="8">IHOROMBE</b-form-checkbox>
+        <b-form-checkbox value="9">ATSIMO ATSINANANA</b-form-checkbox>
+        <b-form-checkbox value="10">ATSINANANA</b-form-checkbox>
+        <b-form-checkbox value="11">ANALANJIROFO</b-form-checkbox>
+        <b-form-checkbox value="12">ALAOTRA MANGORO</b-form-checkbox>
+        <b-form-checkbox value="13">BOENY</b-form-checkbox>
+        <b-form-checkbox value="14">SOFIA</b-form-checkbox>
+        <b-form-checkbox value="15">BETSIBOKA</b-form-checkbox>
+        <b-form-checkbox value="16">MELAKY</b-form-checkbox>
+        <b-form-checkbox value="17">ATSIMO ANDREFANA</b-form-checkbox>
+        <b-form-checkbox value="18">ANDROY</b-form-checkbox>
+        <b-form-checkbox value="19">ANOSY</b-form-checkbox>
+        <b-form-checkbox value="20">MENABE</b-form-checkbox>
+        <b-form-checkbox value="21">DIANA</b-form-checkbox>
+        <b-form-checkbox value="22">SAVA</b-form-checkbox>
       </b-form-checkbox-group>
     </b-form-group>
 <b-form-group id="input-group-2" label="Ratio Région:" label-for="input-2">
@@ -69,10 +88,8 @@
         :aria-describedby="ariaDescribedby"
         name="flavour-2"
       >
-        <b-form-checkbox value="orange">Orange</b-form-checkbox>
-        <b-form-checkbox value="apple">Apple</b-form-checkbox>
-        <b-form-checkbox value="pineapple">Pineapple</b-form-checkbox>
-        <b-form-checkbox value="grape">Grape</b-form-checkbox>
+    <b-form-checkbox v-for="item2 in listediplome" :key="item2.nom" :value="item2.value" inline>{{item2.nom}}</b-form-checkbox>
+
       </b-form-checkbox-group>
     </b-form-group>
 <b-form-group id="input-group-2" label="Ratio Diplome:" label-for="input-2">
@@ -91,15 +108,119 @@
       <pre class="m-0">{{ form }}</pre>
     </b-card>
   </b-modal>
+
+<b-modal id="modal-2" title="BootstrapVue">
+    <p class="my-4">Modifier Profil Enquete</p>
+     <b-form @submit="modifier" @reset="onReset" v-if="show">
+     
+      <b-form-group id="input-group-1" label="Enquete:" label-for="input-1">
+        <b-form-select
+          id="input-1"
+          v-model="formupdate.survey"
+          :options="listeenquetes"
+          required
+        ></b-form-select>
+      </b-form-group>
+ <b-form-group label="Criteres Dialecte:" v-slot="{ ariaDescribedby }">
+      <b-form-checkbox-group
+        id="checkbox-group-2"
+        v-model="formupdate.selected"
+        :aria-describedby="ariaDescribedby"
+        name="flavour-2"
+        inline
+      >
+           <b-form-checkbox v-for="item in listedialecte" :key="item.nom" :value="item.value" inline>{{item.nom}}</b-form-checkbox>
+
+      </b-form-checkbox-group>
+     
+    </b-form-group>
+ <b-form-group id="input-group-2" label="Ratio Dialecte:" label-for="input-2">
+        <b-form-input
+          id="input-2"
+          v-model="formupdate.ratiodialecte"
+          type="number"
+          placeholder="Enter name"
+          required
+        ></b-form-input>
+      </b-form-group>
+    <b-form-group label="Criteres Région:" v-slot="{ ariaDescribedby }">
+      <b-form-checkbox-group
+        id="checkbox-group-2"
+        v-model="formupdate.selectedregion"
+        :aria-describedby="ariaDescribedby"
+        name="flavour-2"
+        stacked
+      >
+        <b-form-checkbox value="1">ANAMALANGA</b-form-checkbox>
+        <b-form-checkbox value="2">VAKINANKARATRA</b-form-checkbox>
+        <b-form-checkbox value="3">ITASY</b-form-checkbox>
+        <b-form-checkbox value="4">BONGOLAVA</b-form-checkbox>
+        <b-form-checkbox value="5">HAUTE MATSIATRA</b-form-checkbox>
+        <b-form-checkbox value="6">AMORON I MANIA</b-form-checkbox>
+        <b-form-checkbox value="7">VATOVAVY FITOVINANY</b-form-checkbox>
+        <b-form-checkbox value="8">IHOROMBE</b-form-checkbox>
+        <b-form-checkbox value="9">ATSIMO ATSINANANA</b-form-checkbox>
+        <b-form-checkbox value="10">ATSINANANA</b-form-checkbox>
+        <b-form-checkbox value="11">ANALANJIROFO</b-form-checkbox>
+        <b-form-checkbox value="12">ALAOTRA MANGORO</b-form-checkbox>
+        <b-form-checkbox value="13">BOENY</b-form-checkbox>
+        <b-form-checkbox value="14">SOFIA</b-form-checkbox>
+        <b-form-checkbox value="15">BETSIBOKA</b-form-checkbox>
+        <b-form-checkbox value="16">MELAKY</b-form-checkbox>
+        <b-form-checkbox value="17">ATSIMO ANDREFANA</b-form-checkbox>
+        <b-form-checkbox value="18">ANDROY</b-form-checkbox>
+        <b-form-checkbox value="19">ANOSY</b-form-checkbox>
+        <b-form-checkbox value="20">MENABE</b-form-checkbox>
+        <b-form-checkbox value="21">DIANA</b-form-checkbox>
+        <b-form-checkbox value="22">SAVA</b-form-checkbox>
+      </b-form-checkbox-group>
+    </b-form-group>
+<b-form-group id="input-group-2" label="Ratio Région:" label-for="input-2">
+        <b-form-input
+          id="input-2"
+          v-model="formupdate.ratioregion"
+          type="number"
+          placeholder="Enter name"
+          required
+        ></b-form-input>
+      </b-form-group>
+    <b-form-group label="Criteres Diplome:" v-slot="{ ariaDescribedby }">
+      <b-form-checkbox-group
+        id="checkbox-group-2"
+        v-model="formupdate.selecteddiplome"
+        :aria-describedby="ariaDescribedby"
+        name="flavour-2"
+      >
+    <b-form-checkbox v-for="item2 in listediplome" :key="item2.nom" :value="item2.value" inline>{{item2.nom}}</b-form-checkbox>
+
+      </b-form-checkbox-group>
+    </b-form-group>
+<b-form-group id="input-group-2" label="Ratio Diplome:" label-for="input-2">
+        <b-form-input
+          id="input-2"
+          v-model="formupdate.ratiodiplome"
+          type="number"
+          placeholder="Enter name"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+    <b-card class="mt-3" header="Form Data Result">
+      <pre class="m-0">{{ formupdate }}</pre>
+    </b-card>
+  </b-modal>
+
  <div>
     <b-table striped hover :items="items" :fields="fields">
         <template v-slot:cell(supprimer)="row">
-            <b-button size="sm" @click="supprimer(row, row.item.last_name)" variant="danger">
+            <b-button size="sm" @click="supprimer(row, row.item.id)" variant="danger">
                Supprimer
             </b-button>
           </template>
              <template v-slot:cell(modifier)="row">
-            <b-button size="sm" @click="modifier(row, 'last_name')" class="mr-2">
+            <b-button v-b-modal.modal-2  size="sm" @click="getbyid(row, row.item.id)" class="mr-2">
                Modifier
             </b-button>
           </template>
@@ -109,29 +230,42 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
       return {
-        fields: ['first_name', 'last_name', 'supprimer','modifier'],
+        fields: ['criterediplompe', 'critereregion','criteredialecte', 'supprimer','modifier'],
         items: [
-          { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          
-        ]
+       
+        ],
       
-      
+        id:0
         ,form: {
-        
+              survey: "",
           selected: [],
           selectedregion: [],
           selecteddiplome: [],
           ratiodialecte: "",
           ratioregion:"",
-          ratiodiplome: "",
-          listeenquetes: null,
+          ratiodiplome: ""
+    
          
         },
-        listeenquetes: [{ text: 'Select One', value: null }, 'A', 'B', 'C', 'D'],
+        formupdate: {
+              survey: "",
+          selected: [],
+          selectedregion: [],
+          selecteddiplome: [],
+          ratiodialecte: "",
+          ratioregion:"",
+          ratiodiplome: ""
+    
+         
+        },
+        listedialecte : [],
+           listediplome : [],
+        listeenquetes: [],
         show: true
       }
     },
@@ -156,14 +290,83 @@ export default {
  return num_str;
     },
     supprimer(row, data) {
-     console.log("delted questionnaire " + data);
+     
+      axios.delete("http://127.0.0.1:8000/profilsurvey_detail/" + data)
+        .then(response => {
+     
+           console.log(response + " profil enquete deleted")
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+
     },
-     modifier(row, data) {
+    modifier(event) {
+    event.preventDefault();
+     axios.post("http://127.0.0.1:8000/profilsurvey_detail/" + this.id , JSON.stringify({
+         survey: this.formupdate.survey,
+         criterediplompe: (this.convertarraytostring(this.formupdate.selecteddiplome)),
+         critereregion: (this.convertarraytostring(this.formupdate.selectedregion)),
+         criteredialecte: (this.convertarraytostring(this.formupdate.selected)),
+         ratiodiplome: this.formupdate.ratiodiplome,
+         ratioregion: this.formupdate.ratioregion,
+         rationdialecte: this.formupdate.ratiodialecte,
+     
+       
+    
+         
+        }) )
+        .then(response => {
+     
+           console.log(response + " profil enquete updated")
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+    },
+     getbyid(row, data) {
      console.log("delted questionnaire " + data);
+this.id = data;
+    axios.get("http://127.0.0.1:8000/profilsurvey_detail/" + data)
+        .then(response => {
+     
+            this.id = data;
+            this.formupdate.survey = response.data.survey;
+            this.formupdate.selected = response.data.criteredialecte.split(",");
+            this.formupdate.selectedregion = response.data.critereregion.split(",");
+            this.formupdate.selecteddiplome = response.data.criterediplompe.split(",");
+            this.formupdate.ratiodialecte = response.data.rationdialecte;
+            this.formupdate.ratioregion = response.data.ratioregion;
+            this.formupdate.ratiodiplome = response.data.ratiodiplome;
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+
     } ,
        onSubmit(event) {
         event.preventDefault()
         alert(this.convertarraytostring(this.form.selected))
+        
+         axios.post("http://127.0.0.1:8000/profilsurvey/",JSON.stringify({
+         survey: this.form.survey,
+         criterediplompe: (this.convertarraytostring(this.form.selecteddiplome)),
+         critereregion: (this.convertarraytostring(this.form.selectedregion)),
+         criteredialecte: (this.convertarraytostring(this.form.selected)),
+         ratiodiplome: this.form.ratiodiplome,
+         ratioregion: this.form.ratioregion,
+         rationdialecte: this.form.ratiodialecte,
+     
+       
+    
+         
+        }))
+        .then(response => {
+     
+           console.log(response + " profil enquete ajouter");
+             
+        })
+
         alert(JSON.stringify(this.form))
       },
       onReset(event) {
@@ -179,6 +382,61 @@ export default {
           this.show = true
         })
       }
+  },
+  created () {
+
+ // get all profil enquete
+     axios.get("http://127.0.0.1:8000/profilsurvey")
+        .then(response => {
+        
+          this.items = response.data;
+     
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+
+    // get all Enquete
+    axios.get("http://127.0.0.1:8000/survey")
+        .then(response => {
+        
+          var array = JSON.parse(JSON.stringify(response.data))
+            for( var i = 0; i < array.length; i++){
+              var a = {"text":array[i].name,"value":array[i].id};
+             this.listeenquetes.push(a);
+              }
+     
+             
+        })
+
+ axios.get("http://127.0.0.1:8000/dialect")
+        .then(response => {
+        
+          var array = JSON.parse(JSON.stringify(response.data))
+            for( var i = 0; i < array.length; i++){
+              var a = {"nom":array[i].nom,"value":array[i].id};
+             this.listedialecte.push(a);
+              }
+     
+             
+        })
+  
+   axios.get("http://127.0.0.1:8000/diploma")
+        .then(response => {
+        
+          var array = JSON.parse(JSON.stringify(response.data))
+            for( var i = 0; i < array.length; i++){
+              var a = {"nom":array[i].name,"value":array[i].name};
+             this.listediplome.push(a);
+              }
+     
+             
+        })
+
   }
+
+  
+  
   }
 </script>

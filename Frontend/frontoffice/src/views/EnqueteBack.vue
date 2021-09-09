@@ -6,7 +6,58 @@
       <button-white class="vfm-btn mx-1" @click="$emit('confirm', close)">Valider</button-white>
       <button-white class="vfm-btn mx-1" @click="$emit('cancel', close)">Annuler</button-white>
     </div> --><button class="absolute top-0 right-0 mt-2 mr-2" data-v-2836fdb5-s=""><span class="text-gray-500" data-v-2836fdb5-s=""><i class="fas fa-times" data-v-2836fdb5-s=""></i></span></button><!--v-if--></div></div></div></div></div></div></div>
- <b-modal id="modal-1" title="BootstrapVue">
+ <b-modal id="modal-2" title="BootstrapVue">
+    <p class="my-4">Modifier Enquete</p>
+     <b-form @submit="modifier"  v-if="show">
+      <b-form-group
+        id="input-group-1"
+        label="name:"
+        label-for="input-1"
+        description="We'll never share your email with anyone else."
+      >
+        <b-form-input
+          id="input-1"
+          v-model="formupdate.name"
+          
+          placeholder="Enter Name"
+          required
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group id="input-group-2" label="description:" label-for="input-2">
+        <b-form-input
+          id="input-2"
+          v-model="formupdate.description"
+          placeholder="Enter name"
+          required
+        ></b-form-input>
+      </b-form-group>
+ <b-form-group id="input-group-5" label="Détail:" label-for="input-5">
+        <b-form-input
+          id="input-5"
+          v-model="formupdate.detail_link"
+          placeholder="Entrez la vrai réponse"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group id="input-group-3" label="Date de Lancement:" label-for="input-3">
+        <b-form-datepicker id="example-datepicker" v-model="formupdate.launch_date" class="mb-2"></b-form-datepicker>
+ 
+      </b-form-group>
+       <b-form-group id="input-group-6" label="Date de Fin:" label-for="input-6">
+        <b-form-datepicker id="example-datepicker" v-model="formupdate.deadline_date" class="mb-2"></b-form-datepicker>
+  
+      </b-form-group>
+
+      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+    <b-card class="mt-3" header="Form Data Result">
+      <pre class="m-0">{{ formupdate }}</pre>
+    </b-card>
+  </b-modal>
+  
+  <b-modal id="modal-1" title="BootstrapVue">
     <p class="my-4">Ajouter Nouveau Enquete</p>
      <b-form @submit="onSubmit" @reset="onReset" v-if="show">
       <b-form-group
@@ -17,7 +68,7 @@
       >
         <b-form-input
           id="input-1"
-          v-model="form.email"
+          v-model="form.name"
           
           placeholder="Enter Name"
           required
@@ -27,7 +78,7 @@
       <b-form-group id="input-group-2" label="description:" label-for="input-2">
         <b-form-input
           id="input-2"
-          v-model="form.name"
+          v-model="form.description"
           placeholder="Enter name"
           required
         ></b-form-input>
@@ -35,7 +86,7 @@
  <b-form-group id="input-group-5" label="Détail:" label-for="input-5">
         <b-form-input
           id="input-5"
-          v-model="form.answer"
+          v-model="form.detail_link"
           placeholder="Entrez la vrai réponse"
           required
         ></b-form-input>
@@ -56,15 +107,16 @@
       <pre class="m-0">{{ form }}</pre>
     </b-card>
   </b-modal>
+  
  <div>
     <b-table striped hover :items="items" :fields="fields">
         <template v-slot:cell(supprimer)="row">
-            <b-button size="sm" @click="supprimer(row, row.item.last_name)" variant="danger">
+            <b-button size="sm" @click="supprimer(row, row.item.id)" variant="danger">
                Supprimer
             </b-button>
           </template>
              <template v-slot:cell(modifier)="row">
-            <b-button size="sm" @click="modifier(row, 'last_name')" class="mr-2">
+            <b-button b-button v-b-modal.modal-2 @click="getbyid(row, row.item.id)" size="sm"  class="mr-2">
                Modifier
             </b-button>
           </template>
@@ -74,19 +126,30 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
       return {
-        fields: ['first_name', 'last_name', 'supprimer','modifier'],
-        items: [
-          { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' }
-        ],form: {
-          email: '',
+        fields: ['id', 'name', 'description' , 'supprimer','modifier'],
+        items: [],
+        id:0,
+        form: {
           name: '',
-          answer:'',
+          description: '',
+          team : null,
+          detail_link:'',
+          launch_date: '',
+          deadline_date: '',
+          applicants_number: 0,
+          is_active: 1
+        },
+        formupdate: {
+          name: '',
+          description: '',
+          detail_link:'',
           launch_date: '',
           deadline_date: ''
+         
         },
         foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
         show: true
@@ -95,14 +158,72 @@ export default {
   methods: {
     supprimer(row, data) {
      console.log("delted questionnaire " + data);
-    },
-     modifier(row, data) {
+       // get all Enquete
+   axios.delete("http://127.0.0.1:8000/survey_detail/" + data)
+        .then(response2 => {
+     console.log(response2);
+           axios.get("http://127.0.0.1:8000/survey")
+        .then(response => {
+     
+            this.items = response.data;
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+  },
+     getbyid(row, data) {
      console.log("delted questionnaire " + data);
+      axios.get("http://127.0.0.1:8000/survey_detail/" + data)
+        .then(response => {
+     
+            this.id = data;
+            this.formupdate.name = response.data.name;
+            this.formupdate.description = response.data.description;
+            this.formupdate.detail_link = response.data.detail_link;
+            this.formupdate.launch_date = response.data.launch_date;
+            this.formupdate.deadline_date = response.data.deadline_date;
+         
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
     } ,
        onSubmit(event) {
         event.preventDefault()
-        alert(JSON.stringify(this.form))
-      },
+        console.log(JSON.stringify(this.form))
+        console.log(this.form)
+// ajouter Enquete
+   axios.post("http://127.0.0.1:8000/survey/" ,  JSON.stringify(this.form) )
+        .then(response => {
+     
+            console.log( response + "enquete ajouté");
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+  },
+   modifier(event) {
+        event.preventDefault()
+        console.log(this.id)
+// ajouter Enquete
+   axios.post("http://127.0.0.1:8000/survey_detail/" + this.id,  JSON.stringify(this.formupdate) )
+        .then(response => {
+     
+            console.log( response + "enquete updaté");
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+  },
       onReset(event) {
         event.preventDefault()
         // Reset our form values
@@ -114,6 +235,18 @@ export default {
           this.show = true
         })
       }
+  },
+  created () {
+    // get all Enquete
+   axios.get("http://127.0.0.1:8000/survey")
+        .then(response => {
+     
+            this.items = response.data;
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
   }
   }
 </script>

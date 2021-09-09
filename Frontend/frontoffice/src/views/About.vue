@@ -13,13 +13,13 @@
         id="input-group-1"
         label="Questions:"
         label-for="input-1"
-        description="We'll never share your email with anyone else."
+       
       >
         <b-form-input
           id="input-1"
-          v-model="form.email"
-          type="email"
-          placeholder="Enter email"
+          v-model="form.question"
+          
+          placeholder="Enter Question"
           required
         ></b-form-input>
       </b-form-group>
@@ -27,15 +27,15 @@
       <b-form-group id="input-group-2" label="Liste Réponse séparé par virgule:" label-for="input-2">
         <b-form-input
           id="input-2"
-          v-model="form.name"
-          placeholder="Enter name"
+          v-model="form.listereponses"
+          placeholder="Enter Liste reponses"
           required
         ></b-form-input>
       </b-form-group>
  <b-form-group id="input-group-5" label="Réponse:" label-for="input-5">
         <b-form-input
           id="input-5"
-          v-model="form.answer"
+          v-model="form.lareponse"
           placeholder="Entrez la vrai réponse"
           required
         ></b-form-input>
@@ -43,8 +43,8 @@
       <b-form-group id="input-group-3" label="Dialecte:" label-for="input-3">
         <b-form-select
           id="input-3"
-          v-model="form.food"
-          :options="foods"
+          v-model="form.dialect"
+          :options="dialect"
           required
         ></b-form-select>
       </b-form-group>
@@ -56,15 +56,67 @@
       <pre class="m-0">{{ form }}</pre>
     </b-card>
   </b-modal>
+
+<b-modal id="modal-2" title="BootstrapVue">
+    <p class="my-4">Modifier Questionnaire</p>
+     <b-form @submit="modifier" @reset="onReset" v-if="show">
+      <b-form-group
+        id="input-group-1"
+        label="Questions:"
+        label-for="input-1"
+       
+      >
+        <b-form-input
+          id="input-1"
+          v-model="formupdate.question"
+          
+          placeholder="Enter Question"
+          required
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group id="input-group-2" label="Liste Réponse séparé par virgule:" label-for="input-2">
+        <b-form-input
+          id="input-2"
+          v-model="formupdate.listereponses"
+          placeholder="Enter Liste reponses"
+          required
+        ></b-form-input>
+      </b-form-group>
+ <b-form-group id="input-group-5" label="Réponse:" label-for="input-5">
+        <b-form-input
+          id="input-5"
+          v-model="formupdate.lareponse"
+          placeholder="Entrez la vrai réponse"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group id="input-group-3" label="Dialecte:" label-for="input-3">
+        <b-form-select
+          id="input-3"
+          v-model="formupdate.dialect"
+          :options="dialect"
+          required
+        ></b-form-select>
+      </b-form-group>
+
+      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+    <b-card class="mt-3" header="Form Data Result">
+      <pre class="m-0">{{ formupdate }}</pre>
+    </b-card>
+  </b-modal>
+
  <div>
     <b-table striped hover :items="items" :fields="fields">
         <template v-slot:cell(supprimer)="row">
-            <b-button size="sm" @click="supprimer(row, row.item.last_name)" variant="danger">
+            <b-button size="sm" @click="supprimer(row, row.item.id)" variant="danger">
                Supprimer
             </b-button>
           </template>
              <template v-slot:cell(modifier)="row">
-            <b-button size="sm" @click="modifier(row, 'last_name')" class="mr-2">
+            <b-button v-b-modal.modal-2  size="sm" @click="getbyid(row, row.item.id)" class="mr-2">
                Modifier
             </b-button>
           </template>
@@ -74,34 +126,83 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
       return {
-        fields: ['first_name', 'last_name', 'supprimer','modifier'],
+        fields: ['question', 'listereponses','lareponse', 'supprimer','modifier'],
+        id:0,
         items: [
-          { age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' }
+          
         ],form: {
-          email: '',
-          name: '',
-          answer:'',
-          food: null,
-          checked: []
+          dialect: '',
+          circonscription: null,
+          question:'',
+          listereponses: '',
+          lareponse: ''
+        },formupdate: {
+          dialect: '',
+          circonscription: null,
+          question:'',
+          listereponses: '',
+          lareponse: ''
         },
-        foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
+        dialect: [],
         show: true
       }
     },
   methods: {
     supprimer(row, data) {
      console.log("delted questionnaire " + data);
+        axios.delete("http://127.0.0.1:8000/questionnaire_detail/" + data)
+        .then(response2 => {
+          console.log(response2 + "questionnaire deleted");
+    })
+    
     },
-     modifier(row, data) {
+     getbyid(row, data) {
      console.log("delted questionnaire " + data);
+     this.id = data;
+
+    axios.get("http://127.0.0.1:8000/questionnaire_detail/" + data)
+        .then(response => {
+     
+            this.id = data;
+            this.formupdate.dialect = response.data.id;
+            
+            this.formupdate.question = response.data.question;
+            this.formupdate.listereponses = response.data.listereponses;
+            this.formupdate.lareponse = response.data.lareponse;
+         
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+
     } ,
        onSubmit(event) {
         event.preventDefault()
-        alert(JSON.stringify(this.form))
+     // ajouter Questionnaire
+   axios.post("http://127.0.0.1:8000/questionnaire/" ,  JSON.stringify(this.form) )
+        .then(response => {
+     
+            console.log( response + "questionnaire ajouté");
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+      },
+      modifier(event) {
+    event.preventDefault()
+       axios.post("http://127.0.0.1:8000/questionnaire_detail/" + this.id,this.formupdate)
+        .then(response => {
+     
+           console.log(response + " questionnaire update");
+             
+        })
       },
       onReset(event) {
         event.preventDefault()
@@ -116,6 +217,34 @@ export default {
           this.show = true
         })
       }
+  },
+  created () {
+    // get all questionnaire
+     axios.get("http://127.0.0.1:8000/questionnaire")
+        .then(response => {
+        
+          this.items = response.data;
+     
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+        //get all Dialect
+   axios.get("http://127.0.0.1:8000/dialect")
+        .then(response => {
+        
+          var array = JSON.parse(JSON.stringify(response.data))
+            for( var i = 0; i <= array.length; i++){
+              var a = {"text":array[i].nom,"value":array[i].id};
+             this.dialect.push(a);
+              }
+     
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
   }
   }
 </script>
