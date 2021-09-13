@@ -110,6 +110,7 @@ body {
     min-height: 100vh;
     overflow-x: hidden
 }
+
 </style>
 
 <script>
@@ -145,8 +146,11 @@ export default {
       }
     },
     created() {
+      //get by id
+              console.log("id params " +  this.$route.params.idenquete + this.$route.params.idenqueteur )
+
            // get all points externe
-   axios.get("http://127.0.0.1:8000/enumerator_point_externe_detail/1/42")
+   axios.get("http://127.0.0.1:8000/enumerator_point_externe_detail/" + this.$route.params.idenquete  + "/" + this.$route.params.idenqueteur)
         .then(response => {
      
             this.items = response.data;
@@ -156,7 +160,7 @@ export default {
              console.log(error);
         });
 
-          axios.get("http://127.0.0.1:8000/enumerator_point_interne_detail/1/42")
+   axios.get("http://127.0.0.1:8000/enumerator_point_interne_detail/" + this.$route.params.idenquete  + "/" + this.$route.params.idenqueteur)
         .then(response => {
      
             this.pointsinterne = response.data;

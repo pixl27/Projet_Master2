@@ -110,6 +110,10 @@
   
  <div>
     <b-table striped hover :items="items" :fields="fields">
+       <template v-slot:cell(name)="row">
+          <router-link :to="`detailenquete/${row.item.id}`">{{row.item.name}}</router-link>
+
+          </template>
         <template v-slot:cell(supprimer)="row">
             <b-button size="sm" @click="supprimer(row, row.item.id)" variant="danger">
                Supprimer

@@ -6,12 +6,20 @@
       <button-white class="vfm-btn mx-1" @click="$emit('cancel', close)">Annuler</button-white>
     </div> --><button class="absolute top-0 right-0 mt-2 mr-2" data-v-2836fdb5-s=""><span class="text-gray-500" data-v-2836fdb5-s=""><i class="fas fa-times" data-v-2836fdb5-s=""></i></span></button><!--v-if--></div></div></div></div></div></div></div>
  <div>
-    <b-table striped hover :items="items" :fields="fields">
+  
+    <b-table striped hover :items="items" :fields="fields"  :per-page="perPage"
+      :current-page="currentPage">
         <template v-slot:cell(detail)="">
               <router-link to="/detailEnqueteur">Detail Enqueteur</router-link>
           </template>
           
     </b-table>
+      <b-pagination
+      v-model="currentPage"
+      :total-rows="rows"
+      :per-page="perPage"
+      aria-controls="my-table"
+     style="justify-content: center;"></b-pagination>
   </div>
   </div>
 </template>
@@ -21,12 +29,19 @@
 export default {
     data() {
       return {
+          perPage: 3,
+        currentPage: 1,
            fields: ['id', 'name', 'description' , 'detail'],
           items:["a"]
       }
     },
   methods: {
  
+  },
+  computed: {
+      rows() {
+        return this.items.length
+      }
   },
   created () {
  

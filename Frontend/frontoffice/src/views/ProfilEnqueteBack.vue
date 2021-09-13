@@ -18,6 +18,14 @@
           required
         ></b-form-select>
       </b-form-group>
+      <b-form-group id="input-group-1" label="Tag:" label-for="input-1">
+        <b-form-select
+          id="input-1"
+          v-model="form.tag"
+          :options="listtag"
+          required
+        ></b-form-select>
+      </b-form-group>
  <b-form-group label="Criteres Dialecte:" v-slot="{ ariaDescribedby }">
       <b-form-checkbox-group
         id="checkbox-group-2"
@@ -118,6 +126,14 @@
           id="input-1"
           v-model="formupdate.survey"
           :options="listeenquetes"
+          required
+        ></b-form-select>
+      </b-form-group>
+       <b-form-group id="input-group-1" label="Tag:" label-for="input-1">
+        <b-form-select
+          id="input-1"
+          v-model="formupdate.tag"
+          :options="listtag"
           required
         ></b-form-select>
       </b-form-group>
@@ -243,6 +259,7 @@ export default {
         id:0
         ,form: {
               survey: "",
+              tag: "",
           selected: [],
           selectedregion: [],
           selecteddiplome: [],
@@ -254,6 +271,7 @@ export default {
         },
         formupdate: {
               survey: "",
+             tag: "",
           selected: [],
           selectedregion: [],
           selecteddiplome: [],
@@ -266,6 +284,7 @@ export default {
         listedialecte : [],
            listediplome : [],
         listeenquetes: [],
+           listtag: [],
         show: true
       }
     },
@@ -305,6 +324,7 @@ export default {
     event.preventDefault();
      axios.post("http://127.0.0.1:8000/profilsurvey_detail/" + this.id , JSON.stringify({
          survey: this.formupdate.survey,
+          tag: this.formupdate.tag,
          criterediplompe: (this.convertarraytostring(this.formupdate.selecteddiplome)),
          critereregion: (this.convertarraytostring(this.formupdate.selectedregion)),
          criteredialecte: (this.convertarraytostring(this.formupdate.selected)),
@@ -332,6 +352,7 @@ this.id = data;
      
             this.id = data;
             this.formupdate.survey = response.data.survey;
+              this.formupdate.tag = response.data.tag;
             this.formupdate.selected = response.data.criteredialecte.split(",");
             this.formupdate.selectedregion = response.data.critereregion.split(",");
             this.formupdate.selecteddiplome = response.data.criterediplompe.split(",");
@@ -350,6 +371,7 @@ this.id = data;
         
          axios.post("http://127.0.0.1:8000/profilsurvey/",JSON.stringify({
          survey: this.form.survey,
+         tag: this.form.tag,
          criterediplompe: (this.convertarraytostring(this.form.selecteddiplome)),
          critereregion: (this.convertarraytostring(this.form.selectedregion)),
          criteredialecte: (this.convertarraytostring(this.form.selected)),

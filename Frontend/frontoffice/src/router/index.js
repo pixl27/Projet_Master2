@@ -47,8 +47,9 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/ProfilEnqueteBack.vue')
   },
   {
-    path: '/detailEnqueteur',
+    path: '/detailenquete/detailEnqueteur/:idenquete/:idenqueteur',
     name: 'detailEnqueteur',
+    params: true,
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -61,6 +62,23 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/EnqueteurBack.vue')
+  } ,
+  {
+    path: '/ranking',
+    name: 'ranking',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/Ranking.vue')
+  } ,
+  {
+    path: '/detailenquete/:id',
+    name: 'detailenquete',
+    params: true,
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/DetailEnquete.vue')
   }
 ]
 
