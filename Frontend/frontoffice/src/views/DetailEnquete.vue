@@ -1,6 +1,9 @@
 <template>
   <div class="detailenquete">
-
+ <loading :active.sync="isLoading" 
+        :can-cancel="false" 
+        :on-cancel="onCancel"
+        :is-full-page="fullPage"></loading>
 <div class="row py-5 px-4">
     <div class="">
         <!-- Profile widget -->
@@ -45,8 +48,11 @@
                 <div class="p-4 rounded shadow-sm bg-light" >
 <b-table striped hover :items="listeenqueteurs" :fields="fields"  :per-page="perPage"
       :current-page="currentPage">
+        <template v-slot:cell(Nom)="row">
+{{row.item.cr_mime_type}}
+          </template>
               <template v-slot:cell(detail)="row">
-          <router-link :to="`detailEnqueteur/${$route.params.id}/${row.item.id}`">Details</router-link>
+          <router-link :to="`detailenqueteurback/${row.item.id}`">Details</router-link>
           </template>
           
     </b-table>
@@ -68,14 +74,17 @@
       value-field="item"
       text-field="name"
       disabled-field="notEnabled"
-      v-on:change="changeItem()"
+      v-on:change="changeItem2()"
     ></b-form-select>
 
                 <div class="p-4 rounded shadow-sm bg-light" >
 <b-table striped hover :items="listeenqueteurs2" :fields="fields2"  :per-page="perPage2"
       :current-page="currentPage2">
+        <template v-slot:cell(Nom)="row">
+{{row.item.cr_mime_type}}
+          </template>
               <template v-slot:cell(detail)="row">
-          <router-link :to="`detailEnqueteur/${$route.params.id}/${row.item.id}`">Details</router-link>
+          <router-link :to="`detailenqueteurback/${row.item.id}`">Details</router-link>
           </template>
           
     </b-table>
@@ -190,28 +199,33 @@ tr:nth-child(even) {
 
 <script>
 import axios from 'axios';
-
+import Loading from 'vue-loading-overlay';
+    // Import stylesheet
+    import 'vue-loading-overlay/dist/vue-loading.css';
 export default {
     data () {
       return {
+      isLoading: false,
+          fullPage: true,
          selected: '1',
             selected2: '1',
          idsurvey:'0',
              rowId: 10,
         options: [
           { item: '1', name: 'Ayant Postulé' },
-          { item: '2', name: 'Suggéré par l Algorithme' },
+         
    
         ],
          options2: [
           { item: '1', name: 'Ayant Postulé' },
           { item: '2', name: 'Suggéré par l Algorithme' },
+          
    
         ],
           items : null,
             items2 : null,
-         fields: ['id', 'gender','detail'],
-        fields2: ['id', 'gender','detail'],
+         fields: ['Nom', 'gender','detail'],
+        fields2: ['Nom', 'gender','detail'],
 
          listeenqueteurs : [],
          listeenqueteurs2 : [],
@@ -224,25 +238,97 @@ export default {
     },
     methods: {
             changeItem: function changeItem() {
+              //
+                    this.isLoading=true;
+                    this.idsurvey = this.$route.params.id;
+
             //grab some remote data
               console.log(" slected " + this.selected)
               if(this.selected=="1"){
 
-           axios.get("http://127.0.0.1:8000/enumerator_list_bysurvey/" +  this.$route.params.id )
+           axios.get("http://127.0.0.1:8000/getlisteEnqueteurExperimenter/" +  this.$route.params.id )
         .then(response => {
      
             this.listeenqueteurs = response.data;
-             
+            this.idsurvey = this.$route.params.id;
+                                 this.isLoading=false;
+
         })
               }
-              else if(this.selected=="2"){
-//ALGORITHME DE SUGGESTION
+              else{
+                axios.get("http://127.0.0.1:8000/suggestion/" + this.$route.params.id )
+        .then(response => {
+           var array = JSON.parse(JSON.stringify(response.data))
+              for (var i = 0 ; i< array.length;i++){
+               if(this.selected==array[i].type){
+                 this.listeenqueteurs = array[i].liste;
+                 this.idsurvey = array[i].id_survey;
+                                     this.isLoading=false;
+
+                 break;
+               }
+              }
+
+        })
+
+              }
+            } ,
+             changeItem2: function changeItem2() {
+              //
+                    this.isLoading=true;
+                    this.idsurvey = this.$route.params.id;
+
+            //grab some remote data
+              console.log(" slected non " + this.selected2)
+              if(this.selected2=="1"){
+
+           axios.get("http://127.0.0.1:8000/getlisteEnqueteurNonExperimenter/" +  this.$route.params.id )
+        .then(response => {
+     
+            this.listeenqueteurs2 = response.data;
+            this.idsurvey = this.$route.params.id;
+                                 this.isLoading=false;
+
+        })
+              }
+              else{
+                              console.log(" slected " + this.selected)
+
+                axios.get("http://127.0.0.1:8000/suggestion_non_experimenter/" + this.$route.params.id )
+        .then(response => {
+         this.listeenqueteurs2 = response.data;
+                                 this.isLoading=false;
+
+        })
 
               }
             }
+
+
+
         },
-  
+        components: {
+            Loading
+        },
     created() {
+      // get enqueteur suggerer 
+                    this.isLoading=true;
+
+ axios.get("http://127.0.0.1:8000/suggestion/" + this.$route.params.id )
+        .then(response => {
+           var array = JSON.parse(JSON.stringify(response.data))
+         //  console.log("array " + array[0].liste_enqueteur_suggerer_par_enquete_similaire[0].id)
+              for (var i = 0 ; i< array.length;i++){
+
+                var op = { item: array[i].type, name: array[i].type } 
+                this.options.push(op);
+              }
+                                  this.isLoading=false;
+
+
+        })
+
+
         //get enquete by id
         this.idsurvey = this.$route.params.id
         console.log("id params " +  this.$route.params.id)
@@ -251,22 +337,34 @@ export default {
         .then(response => {
      
             this.items = response.data;
-             
+                    
+
         })
        .catch(function (error) {
              console.log(error);
         });
 
-           axios.get("http://127.0.0.1:8000/enumerator_list_bysurvey/" +  this.$route.params.id )
+           axios.get("http://127.0.0.1:8000/getlisteEnqueteurExperimenter/" +  this.$route.params.id )
         .then(response => {
      
             this.listeenqueteurs = response.data;
+
             console.log("dksopdk " + this.listeenqueteurs.length )
-             
         })
        .catch(function (error) {
              console.log(error);
         });
+
+   axios.get("http://127.0.0.1:8000/getlisteEnqueteurNonExperimenter/" +  this.$route.params.id )
+        .then(response => {
+     
+                         this.listeenqueteurs2 = response.data;
+
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+
 
 
     } ,

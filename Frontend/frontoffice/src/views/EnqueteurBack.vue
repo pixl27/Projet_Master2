@@ -31,7 +31,7 @@ export default {
       return {
           perPage: 3,
         currentPage: 1,
-           fields: ['id', 'name', 'description' , 'detail'],
+           fields: ['id', 'name' , 'detail'],
           items:["a"]
       }
     },
@@ -44,7 +44,7 @@ export default {
       }
   },
   created () {
- 
+
   }
   }
 </script>

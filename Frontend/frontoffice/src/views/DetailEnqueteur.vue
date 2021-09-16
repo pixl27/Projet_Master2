@@ -1,6 +1,9 @@
 <template>
   <div class="detailenqueteur">
-
+ <loading :active.sync="isLoading" 
+        :can-cancel="false" 
+        :on-cancel="onCancel"
+        :is-full-page="fullPage"></loading>
 <div class="row py-5 px-4">
     <div class="col-md-5 mx-auto">
         <!-- Profile widget -->
@@ -9,16 +12,17 @@
                 <div class="media align-items-end profile-head">
                     <div class="profile mr-3"><img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80" alt="..." width="130" class="rounded mb-2 img-thumbnail"></div>
                     <div class="media-body mb-5 text-white">
-                        <h4 class="mt-0 mb-0">Points Total : {{this.items.point_total}}</h4>
-                        <h4 class="mt-0 mb-0">Nom Prenom</h4>
-                        <p class="small mb-4"> <i class="fas fa-map-marker-alt mr-2"></i>Addresse</p>
+                       <h4 class="mt-0 mb-0">Nom : {{this.myprofil.cr_mime_type}}</h4> <br/>
+                         <h4  v-if="this.personnalité!=null" class="mt-0 mb-0">Personnalité :{{this.personnalité}}</h4>
+                  <br/>
+                        <p class="small mb-4"> Addresse : {{this.myprofil.address}}</p>
                     </div>
                 </div>
             </div>
             <div class="bg-light p-4 d-flex justify-content-end text-center">
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
-                        <h5 class="font-weight-bold mb-0 d-block">{{this.items.point_diploma}}</h5><small class="text-muted"> <i class="fas fa-image mr-1"></i> Points Diplome</small>
+                        <h5  v-if="this.items.point_diploma!=null" class="font-weight-bold mb-0 d-block">{{this.items.point_diploma}}</h5><small class="text-muted"> <i class="fas fa-image mr-1"></i> Points Diplome</small>
                     </li>
                     <li class="list-inline-item">
                         <h5 class="font-weight-bold mb-0 d-block">{{this.items.point_region}}</h5><small class="text-muted"> <i class="fas fa-user mr-1"></i> Points Dialecte</small>
@@ -119,7 +123,11 @@ import axios from 'axios';
 export default {
     data: function() {
       return {
+        isLoading: false,
+          fullPage: true,
           items : null,
+          myprofil:null,
+          personnalité:"N'a pas passé le test",
           pointsinterne:null,
           stars:0,
           a:true,
@@ -147,17 +155,47 @@ export default {
     },
     created() {
       //get by id
+      this.isLoading = true;
               console.log("id params " +  this.$route.params.idenquete + this.$route.params.idenqueteur )
+        // get personnalité
+
+axios.get("http://127.0.0.1:8000/getPersonnalityByEnumeratorId/"+ this.$route.params.idenqueteur)
+        .then(response => {
+         console.log("perso " + response.data.personality);
+    
+         if(response.data.personality=="dependable"){
+           this.personnalité = "Cette Personne est Dépendant aux Gens"
+         }
+           if(response.data.personality=="serious"){
+            this.personnalité = "Cette Personne est Sérieux"
+
+         }
+           if(response.data.personality=="responsible"){
+        this.personnalité = "Cette Personne est Résponsable"
+         }
+           if(response.data.personality=="lively"){
+           this.personnalité = "Cette Personne est Joyeux"
+         }
+           if(response.data.personality=="extraverted"){
+           this.personnalité = "Cette Personne est Extravertis"
+         }
+             
+        })
+       .catch(function (error) {
+         this.personnalité = "test non passé"
+             console.log(error);
+        });
 
            // get all points externe
    axios.get("http://127.0.0.1:8000/enumerator_point_externe_detail/" + this.$route.params.idenquete  + "/" + this.$route.params.idenqueteur)
         .then(response => {
-     
+       console.log(" acunn");
             this.items = response.data;
              
         })
        .catch(function (error) {
-             console.log(error);
+          this.items = [];
+             console.log(error + " acunn");
         });
 
    axios.get("http://127.0.0.1:8000/enumerator_point_interne_detail/" + this.$route.params.idenquete  + "/" + this.$route.params.idenqueteur)
@@ -166,9 +204,9 @@ export default {
             this.pointsinterne = response.data;
             var json = response.data;
             console.log("json " + this.series[0].data )
-             this.series[0].data.push(parseFloat(json.vitesse) / 10);
-           this.series[0].data.push(parseFloat(json.taux_erreur));
-            this.series[0].data.push(parseFloat(json.avis));
+             this.series[0].data.push(parseFloat(json.vitesse));
+           this.series[0].data.push((100 - parseFloat(json.taux_erreur))/10);
+            this.series[0].data.push(parseFloat(json.avis) * 2);
             this.stars =parseFloat(json.avis);
             if(this.stars < 3){
                 this.a = false;
@@ -178,13 +216,25 @@ export default {
 
             }
 
-              
+                 this.isLoading = false;
 
+             
+        })
+       .catch(function (error) {
+          this.pointsinterne = [];
+             console.log(error);
+        });
+
+ axios.get("http://127.0.0.1:8000/enumerator_detail/"+ this.$route.params.idenqueteur)
+        .then(response => {
+     
+            this.myprofil = response.data;
              
         })
        .catch(function (error) {
              console.log(error);
         });
+
     }
 };
 

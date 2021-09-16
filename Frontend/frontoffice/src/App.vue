@@ -10,6 +10,8 @@
 
     </div>
     <router-view/>
+    <pulse-loader :loading="loading" :color="color" :size="size"></pulse-loader>
+
   </div>
 </template>
 <script>
