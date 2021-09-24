@@ -53,12 +53,38 @@
         ></b-form-select>
       </b-form-group>
 
-      <b-button type="submit" style="margin-top:2%" variant="primary">Submit</b-button>
+      <b-button style="margin-top:2%" @click="onSubmit" variant="primary">Submit</b-button>
       <b-button style="margin-top:2%;margin-left:68%" @click="hideModal" variant="danger">Cancel</b-button>
 
     </b-form>
    
   </b-modal>
+
+ <b-modal id="modal-4" ref="modal-4" hide-footer title="Questionnaire">
+    <p class="my-4">Nous avons détécté des erreurs</p>
+     <b-form @submit="onSubmitSurvey"  v-if="show">
+      <b-form-group
+        id="input-group-1"
+        label="Voulez vous dire :"
+        label-for="input-1"
+       
+      >
+        <b-form-input 
+          id="input-1"
+          v-model="corrige"
+          
+          placeholder="Enter Question"
+          required
+        ></b-form-input>
+      </b-form-group>
+      <b-button type="submit" style="margin-top:2%" variant="primary">Oui</b-button>
+      <b-button style="margin-top:2%;margin-left:68%" @click="reverse" variant="danger">Non</b-button>
+
+    </b-form>
+   
+  </b-modal>
+
+
 
 <b-modal id="modal-2" ref="modal-2"  hide-footer title="BootstrapVue">
     <p class="my-4">Modifier Questionnaire</p>
@@ -149,6 +175,7 @@ export default {
                 fullPage: true,
         fields: ['question', 'listereponses','lareponse', 'supprimer','modifier'],
         id:0,
+        corrige:"",
         iddelete:0,
         items: [
           
@@ -173,6 +200,9 @@ export default {
             Loading
         },
   methods: {
+    corriger(){
+        console.log('blur ' + this.form.question)
+    },
     supprimer() {
                  this.$toast.open({
         message: "Questionnaire Supprimer",
@@ -226,9 +256,9 @@ this.iddelete = data;
         hideModaldelete() {
         this.$refs['modal-3'].hide()
       },
-       onSubmit(event) {
-        
-               this.$refs['modal-1'].hide();
+         reverse() {
+                this.$refs['modal-4'].hide()
+           this.$refs['modal-1'].hide();
          this.isLoading = true;
         event.preventDefault()
      // ajouter Questionnaire
@@ -261,6 +291,107 @@ this.iddelete = data;
        .catch(function (error) {
              console.log(error);
         });
+
+      },
+      onSubmitSurvey(event) {
+        this.form.question = this.corrige
+                this.$refs['modal-4'].hide()
+           this.$refs['modal-1'].hide();
+         this.isLoading = true;
+        event.preventDefault()
+     // ajouter Questionnaire
+   axios.post("http://127.0.0.1:8000/questionnaire/" ,  JSON.stringify(this.form) )
+        .then(response => {
+     
+            console.log( response + "questionnaire ajouté");
+                 this.$toast.open({
+        message: "Questionnaire ajouté",
+        type: "success",
+        duration: 5000,
+        dismissible: true
+      })
+                  this.isLoading = false;
+
+ axios.get("http://127.0.0.1:8000/questionnaire")
+        .then(response => {
+        
+          this.items = response.data;
+     
+         
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+
+
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+      },
+       onSubmit(event) {
+                                  this.$refs['modal-1'].hide();
+
+                  this.isLoading = true;
+
+          axios.post("http://127.0.0.1:8000/verifyText" ,  JSON.stringify({"text":this.form.question}) )
+        .then(response => {     
+            console.log( response.data + "questionnaire ajouté");
+            if(!response.data){
+this.$bvModal.show("modal-4")	
+
+ axios.post("http://127.0.0.1:8000/corrigerText" ,  JSON.stringify({"text":this.form.question}) )
+        .then(response => {
+     
+            console.log( JSON.stringify(response.data) + "response.data.text");
+             this.corrige = response.data
+                      this.isLoading = false;
+
+      })
+
+
+
+            }
+            else {
+               
+                this.$refs['modal-1'].hide();
+         this.isLoading = true;
+        event.preventDefault()
+     // ajouter Questionnaire
+   axios.post("http://127.0.0.1:8000/questionnaire/" ,  JSON.stringify(this.form) )
+        .then(response => {
+     
+            console.log( response + "questionnaire ajouté");
+                 this.$toast.open({
+        message: "Questionnaire ajouté",
+        type: "success",
+        duration: 5000,
+        dismissible: true
+      })
+                  this.isLoading = false;
+
+ axios.get("http://127.0.0.1:8000/questionnaire")
+        .then(response => {
+        
+          this.items = response.data;
+     
+         
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+
+
+             
+        })
+       .catch(function (error) {
+             console.log(error);
+        });
+
+            }
+      })
+            
       },
       modifier(event) {
           this.$refs['modal-2'].hide();

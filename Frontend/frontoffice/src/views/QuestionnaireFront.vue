@@ -1,8 +1,8 @@
 <template>
-  <div class="questionnairefront">
+  <div style="margin-top:5%" class="questionnairefront">
   
     <!-- If you want to show survey, uncomment the line below -->
-    <h1>Quizz Generale sur les Dialectes que vous parlez</h1>
+    <h1>Quizz Generale</h1>
  <survey :survey="survey"></survey> 
     <!-- If you want to hide Survey Creator, comment the line below -->
    <!-- <survey-creator></survey-creator>-->
@@ -37,7 +37,6 @@ import "survey-vue/survey.css";
             };
         },
   created () {
-
        this.json = {
   title: "Quiz Dialecte",
   showProgressBar: "bottom",

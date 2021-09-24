@@ -102,6 +102,15 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/DetailEnqueteurBack.vue')
   } ,
   {
+    path: '/detailEnqueteur/:idenquete/:idenqueteur',
+    name: 'performance',
+    params: true,
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/DetailEnqueteur.vue')
+  } ,
+  {
     path: '/questionnairepersonalitefront',
     name: 'questionnairepersonalitefront',
     params: true,
@@ -109,7 +118,64 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/QuestionnairePersonnaliteFront.vue')
-  }
+  } ,
+  {
+    path: '/acceuilfront',
+    name: 'acceuilfront',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/AcceuilFront.vue')
+  } ,
+  {
+    path: '/profilfront',
+    name: 'profilfront',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/ProfilFront.vue')
+  } ,
+  {
+    path: '/chatfront',
+    name: 'chatfront',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/ChatFront.vue')
+  }  ,
+  {
+    path: '/chatback',
+    name: 'chatback',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/ChatBack.vue')
+  }  ,
+  {
+    path: '/loginfront',
+    name: 'loginfront',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/LoginFront.vue')
+  }  ,
+  {
+    path: '/connexionfront',
+    name: 'connexionfront',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/ConnexionFront.vue')
+  }  ,
+  {
+    path: '/profildetailfront',
+    name: 'profildetailfront',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/ProfilDetailFront.vue')
+  } 
+
   
 ]
 

@@ -2,7 +2,7 @@
   <div class="questionnairefront">
   
     <!-- If you want to show survey, uncomment the line below -->
-    <h1>Quizz de Test de personnalité</h1>
+    <h1 style="margin-top:5%" >Test de personnalité</h1>
  <survey v-if="!istestpassed" :survey="survey"></survey> 
 
    <h2 v-if="istestpassed">Vous avez déja passé le test</h2>
@@ -47,7 +47,7 @@ import "survey-vue/survey.css";
             };
         },
   created () {
-var idprofil = 46;
+var idprofil = 47;
 this.idprofil = idprofil;
 var gender = "";
  axios.get("http://127.0.0.1:8000/getPersonnalityByEnumeratorId/"+ idprofil)
@@ -80,7 +80,7 @@ var gender = "";
   firstPageIsStarted: true,
   startSurveyText: "Démarrer",
   pages: [
-    { questions: [ {type: "html", html: "Vous aller faire un Quiz sur . <br/>You have 10 seconds for every page and 25 seconds for the whole survey of 3 questions.<br/>Please click on <b>'Start Quiz'</b> button when you are ready." } ] },
+    { questions: [ {type: "html", html: "Vous aller faire un Quiz Pour tester votre personnalité , prenez votre temps" } ] },
     {
             questions: [
                 {
